@@ -4,7 +4,7 @@
 
 ​```mermaid
 graph TD
-    A[User - Hospital or Pharmacy Staff] -->|Login / Sign Up| B[Auth System - Flask-Login]
+    A[User - Hospital or Pharmacy Staff] -->|Login / Sign Up| B[Auth System - Flask Sessions]
     B -->|Role-based redirect| C[Hospital or Pharmacy Dashboard]
     C -->|Add medicine + price| D[Frontend - HTML CSS JS]
     D -->|API request| E[Backend - Flask]
@@ -22,7 +22,7 @@ graph TD
 | Component | Technology | Responsibility |
 |---|---|---|
 | Frontend | HTML, CSS, JavaScript | Displays dashboards, expiry alerts, match results, price breakdowns, orders, and the notification bell |
-| Auth System | Flask-Login | Handles sign-up/login, hashes passwords, and enforces role-based access (Hospital vs Pharmacy) |
+| Auth System | Flask (built-in sessions) | Handles sign-up/login and enforces role-based access (Hospital vs Pharmacy) via a custom `login_required` decorator and server-side session state |
 | Backend / API | Python (Flask) | Routes requests between frontend and database; runs all core logic |
 | Database | SQLite | Stores users, facility info, medicine stock (with type and price), orders, and notifications |
 | Expiry Risk Engine | Python | Flags medicines nearing expiry using type-specific thresholds (tighter for injectables, looser for tablets/capsules) |
@@ -45,8 +45,8 @@ graph TD
 
 ## Security and Scalability Notes
 
-- Authentication uses hashed passwords via Flask-Login; sessions are used for role-based access control between Hospital and Pharmacy views.
+- Authentication is enforced via server-side sessions and a custom `login_required` decorator, restricting access based on facility role (Hospital vs Pharmacy).
 - Payment is fully simulated for this hackathon prototype — no real payment gateway (e.g. Razorpay/Stripe) is integrated, since that requires merchant setup and API keys outside the scope of a demo.
 - SMS/email notifications are simulated and logged to the database rather than sent through a real messaging API.
-- For production use, this would additionally need encrypted storage of stock/pricing data, stricter facility-level authorization checks on orders, and a real payment gateway with webhook-based confirmation.
+- For production use, this would additionally need password hashing (if not already present) and encrypted storage of stock/pricing data, stricter facility-level authorization checks on orders, and a real payment gateway with webhook-based confirmation.
 - The matching and pricing logic currently runs against a small demo dataset; a production version would need database indexing to scale matching across hundreds of facilities in real time.
