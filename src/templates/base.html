@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}MedRescue AI{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="{{ url_for('home') }}" class="nav-brand">
+      <span class="brand-cross">⚕</span>
+      MedRescue <span class="brand-ai">AI</span>
+    </a>
+
+    {% if session.get('facility_id') %}
+      <ul class="nav-links">
+        <li><a href="{{ url_for('home') }}"                    class="{{ 'active' if request.endpoint == 'home' }}">Home</a></li>
+        <li><a href="{{ url_for('add_medicine') }}"            class="{{ 'active' if request.endpoint == 'add_medicine' }}">Add Medicine</a></li>
+        <li><a href="{{ url_for('search') }}"                  class="{{ 'active' if request.endpoint == 'search' }}">Search</a></li>
+        <li><a href="{{ url_for('matches', tab='mine') }}"     class="{{ 'active' if request.endpoint == 'matches' and request.args.get('tab','mine') == 'mine' }}">My Matches</a></li>
+        <li><a href="{{ url_for('matches', tab='all') }}"      class="{{ 'active' if request.endpoint == 'matches' and request.args.get('tab') == 'all' }}">All Matches</a></li>
+        <li><a href="{{ url_for('profile') }}"                 class="{{ 'active' if request.endpoint == 'profile' }}">Profile</a></li>
+      </ul>
+      <div class="nav-right">
+        <!-- ── Notification Bell ── -->
+        <div class="bell-wrap" id="bellWrap">
+          <button class="bell-btn" id="bellBtn" aria-label="Notifications" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            {% if unread_count > 0 %}
+              <span class="bell-badge">{{ unread_count if unread_count < 100 else '99+' }}</span>
+            {% endif %}
+          </button>
+
+          <div class="bell-dropdown" id="bellDropdown" hidden>
+            <div class="bell-header">
+              <span>Notifications</span>
+              {% if unread_count > 0 %}
+                <button class="bell-mark-read" id="markReadBtn" type="button">Mark all read</button>
+              {% endif %}
+            </div>
+            <ul class="bell-list">
+              {% if bell_notifications %}
+                {% for n in bell_notifications %}
+                <li class="bell-item{% if not n.is_read %} bell-unread{% endif %}">
+                  <span class="bell-channel bell-ch-{{ n.channel }}">
+                    {% if n.channel == 'sms' %}📱{% else %}✉️{% endif %}
+                  </span>
+                  <div class="bell-content">
+                    <div class="bell-med">{{ n.medicine_name }}</div>
+                    <div class="bell-msg">{{ n.message }}</div>
+                    <div class="bell-time">{{ n.sent_at }}</div>
+                  </div>
+                </li>
+                {% endfor %}
+              {% else %}
+                <li class="bell-empty">No notifications yet.</li>
+              {% endif %}
+            </ul>
+            <a href="{{ url_for('profile') }}#notifications" class="bell-footer">View all in Profile →</a>
+          </div>
+        </div>
+
+        <span class="nav-user">Logged in as: <strong>{{ session.facility_name }}</strong></span>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+      </div>
+    {% else %}
+      <ul class="nav-links">
+        <li><a href="{{ url_for('add_facility') }}" class="{{ 'active' if request.endpoint == 'add_facility' }}">Register Facility</a></li>
+      </ul>
+    {% endif %}
+  </div>
+</nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-wrap">
+      {% for category, msg in messages %}
+        <div class="flash flash-{{ category }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  MedRescue AI &mdash; Reducing medicine waste, saving lives.
+</footer>
+
+<script>
+(function () {
+  var btn      = document.getElementById('bellBtn');
+  var wrap     = document.getElementById('bellWrap');
+  var dropdown = document.getElementById('bellDropdown');
+  var markBtn  = document.getElementById('markReadBtn');
+
+  if (!btn || !dropdown) return;
+
+  btn.addEventListener('click', function (e) {
+    e.stopPropagation();
+    var isOpen = !dropdown.hidden;
+    dropdown.hidden = isOpen;
+    btn.setAttribute('aria-expanded', String(!isOpen));
+  });
+
+  // Close on outside click
+  document.addEventListener('click', function (e) {
+    if (wrap && !wrap.contains(e.target)) {
+      dropdown.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  // Mark all as read via fetch
+  if (markBtn) {
+    markBtn.addEventListener('click', function () {
+      fetch('{{ url_for("mark_notifications_read") }}', { method: 'POST' })
+        .then(function () {
+          // Remove badge and unread highlights immediately
+          var badge = btn.querySelector('.bell-badge');
+          if (badge) badge.remove();
+          document.querySelectorAll('.bell-unread').forEach(function (el) {
+            el.classList.remove('bell-unread');
+          });
+          markBtn.remove();
+        });
+    });
+  }
+})();
+</script>
+
+</body>
+</html>

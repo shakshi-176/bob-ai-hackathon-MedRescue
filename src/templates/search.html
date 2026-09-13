@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Search Medicines — MedRescue AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Medicine Search</h1>
+    <p class="page-subtitle">Find which facilities currently stock a specific medicine.</p>
+  </div>
+</div>
+
+<div class="search-bar-wrap">
+  <form method="GET" action="{{ url_for('search') }}" class="search-form">
+    <input type="text" name="q" id="q" value="{{ query }}"
+           placeholder="Type a medicine name, e.g. Amoxicillin…"
+           autofocus autocomplete="off" />
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+{% if query %}
+  {% if results %}
+    <p class="search-count">
+      {{ results|length }} result{{ 's' if results|length != 1 }} for
+      &ldquo;<strong>{{ query }}</strong>&rdquo;
+    </p>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+              <tr>
+                    <th>Medicine Name</th>
+                    <th>Med Type</th>
+                    <th>Facility</th>
+                    <th>Type</th>
+                    <th>Area</th>
+                    <th>Contact Number</th>
+                    <th class="num">Qty</th>
+                    <th>Expiry</th>
+                    <th>Urgency</th>
+                    <th>Price Breakdown</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for r in results %}
+                  <tr class="{{ r.expiry_class }}">
+                    <td class="med-name">{{ r.medicine_name }}</td>
+                    <td><span class="medtype-badge medtype-{{ r.medicine_type }}">{{ r.medicine_type }}</span></td>
+                    <td>{{ r.facility_name }}</td>
+                    <td><span class="type-badge type-{{ r.facility_type }}">{{ r.facility_type }}</span></td>
+                    <td class="muted-cell">{{ r.location_area }}</td>
+                    <td>
+                      {% if r.contact_number %}
+                        <a href="tel:{{ r.contact_number }}" class="contact-link">📞 {{ r.contact_number }}</a>
+                      {% else %}
+                        <span class="muted-cell">—</span>
+                      {% endif %}
+                    </td>
+                    <td class="num">{{ r.quantity }}</td>
+                    <td>{{ r.expiry_date }}</td>
+                    <td>
+                      {% if r.expiry_class == 'expiry-red' %}
+                        <span class="pill pill-red">{{ r.days_left }}d</span>
+                      {% elif r.expiry_class == 'expiry-orange' %}
+                        <span class="pill pill-orange">{{ r.days_left }}d</span>
+                      {% elif r.expiry_class == 'expiry-yellow' %}
+                        <span class="pill pill-yellow">{{ r.days_left }}d</span>
+                      {% else %}
+                        <span class="pill pill-green">{{ r.days_left }}d</span>
+                      {% endif %}
+                    </td>
+                    <td class="search-price-cell">
+                      {% if r.pricing %}
+                      <div class="search-price-lines">
+                        <span>₹{{ "%.2f"|format(r.pricing.base_price) }} base + 5% = ₹{{ "%.2f"|format(r.pricing.markup_price) }}/unit</span>
+                        <span>+ ₹{{ "%.2f"|format(r.pricing.transportation_charge) }} transport</span>
+                        <strong>= ₹{{ "%.2f"|format(r.pricing.total_amount) }} total ({{ r.pricing.quantity }} units)</strong>
+                      </div>
+                      {% else %}—{% endif %}
+                    </td>
+                    <td>
+                      {% if r.facility_id != session.facility_id %}
+                      <form method="POST" action="{{ url_for('place_order') }}">
+                        <input type="hidden" name="medicine_id"        value="{{ r.id }}" />
+                        <input type="hidden" name="source_facility_id" value="{{ r.facility_id }}" />
+                        <input type="hidden" name="quantity"           value="{{ r.quantity }}" />
+                        <button type="submit" class="btn btn-request btn-sm">🛒 Request</button>
+                      </form>
+                      {% else %}
+                        <span class="muted-cell">Own stock</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+      </table>
+    </div>
+
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h2>No results found</h2>
+      <p>No facility currently stocks &ldquo;{{ query }}&rdquo; with available quantity.</p>
+    </div>
+  {% endif %}
+{% else %}
+  <div class="search-hint">
+    <p>Enter a medicine name above to find facilities that have it in stock.</p>
+  </div>
+{% endif %}
+
+{% endblock %}

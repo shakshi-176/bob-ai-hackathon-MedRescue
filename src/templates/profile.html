@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block title %}Profile — MedRescue AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Facility Profile</h1>
+    <p class="page-subtitle">Your registered facility details and activity summary.</p>
+  </div>
+</div>
+
+<div class="profile-layout">
+
+  <!-- Details card -->
+  <div class="profile-card">
+    <div class="profile-card-header">
+      <div class="profile-avatar">
+        {% if facility.type == 'hospital' %}🏥{% else %}💊{% endif %}
+      </div>
+      <div>
+        <div class="profile-name">{{ facility.name }}</div>
+        <span class="type-badge type-{{ facility.type }}">{{ facility.type }}</span>
+      </div>
+    </div>
+
+    <div class="profile-details">
+      <div class="profile-row">
+        <span class="profile-label">Username</span>
+        <span class="profile-value">{{ facility.username }}</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Location / Area</span>
+        <span class="profile-value">{{ facility.location_area }}</span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Contact Number</span>
+        <span class="profile-value">
+          {% if facility.contact_number %}
+            <a href="tel:{{ facility.contact_number }}" class="contact-link">{{ facility.contact_number }}</a>
+          {% else %}
+            <span class="muted-cell">Not set</span>
+          {% endif %}
+        </span>
+      </div>
+      <div class="profile-row">
+        <span class="profile-label">Facility Type</span>
+        <span class="profile-value" style="text-transform: capitalize;">{{ facility.type }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats card -->
+  <div class="profile-stats-col">
+    <div class="profile-stat-card">
+      <div class="profile-stat-number">{{ total_medicines }}</div>
+      <div class="profile-stat-label">Medicines Registered</div>
+    </div>
+    <div class="profile-stat-card profile-stat-teal">
+      <div class="profile-stat-number">{{ total_transfers }}</div>
+      <div class="profile-stat-label">Completed Transfers</div>
+    </div>
+    <div class="profile-actions">
+      <a href="{{ url_for('add_medicine') }}" class="btn btn-primary">+ Add Medicine</a>
+      <a href="{{ url_for('matches', tab='mine') }}" class="btn btn-outline">View My Matches</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Orders -->
+<div class="orders-section">
+  <div class="section-header" style="margin-top:2.5rem;">
+    <div>
+      <h2>My Orders</h2>
+      <p class="section-intro" style="margin:0;">
+        Medicines you have requested from other facilities. Pay pending orders below.
+      </p>
+    </div>
+  </div>
+
+  {% if orders %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Medicine</th>
+          <th>Source Facility</th>
+          <th class="num">Qty</th>
+          <th class="num">Unit Price (₹)</th>
+          <th class="num">Transport (₹)</th>
+          <th class="num">Total (₹)</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td class="muted-cell">#{{ o.id }}</td>
+          <td class="med-name">{{ o.medicine_name }}</td>
+          <td>{{ o.source_facility_name }}</td>
+          <td class="num">{{ o.quantity }}</td>
+          <td class="num">₹{{ "%.2f"|format(o.unit_price) }}</td>
+          <td class="num">₹{{ "%.2f"|format(o.transportation_charge) }}</td>
+          <td class="num"><strong>₹{{ "%.2f"|format(o.total_amount) }}</strong></td>
+          <td>
+            <span class="order-status-badge order-{{ o.payment_status }}">
+              {% if o.payment_status == 'paid' %}✅ Paid{% else %}⏳ Pending{% endif %}
+            </span>
+          </td>
+          <td class="muted-cell">{{ o.created_at }}</td>
+          <td>
+            {% if o.payment_status == 'pending' %}
+            <form method="POST" action="{{ url_for('pay_order', order_id=o.id) }}">
+              <button type="submit" class="btn btn-pay">💳 Pay Now</button>
+            </form>
+            {% else %}
+              <span class="muted-cell">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:2rem;">
+    <p>No orders yet. Request medicines from the <a href="{{ url_for('matches') }}">Matches</a> or <a href="{{ url_for('search') }}">Search</a> pages.</p>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Recent Notifications -->
+<div class="notif-section" id="notifications">
+  <div class="section-header" style="margin-top:2.5rem;">
+    <div>
+      <h2>Recent Notifications</h2>
+      <p class="section-intro" style="margin:0;">
+        Simulated SMS and email alerts generated for urgent or expiring medicines
+        in your inventory. No real messages are sent — this is a demo prototype.
+      </p>
+    </div>
+  </div>
+
+  {% if notifications %}
+  <div class="table-wrap">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Channel</th>
+          <th>Medicine</th>
+          <th>Message</th>
+          <th>Sent At</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for n in notifications %}
+        <tr class="{% if not n.is_read %}notif-row-unread{% endif %}">
+          <td>
+            <span class="notif-badge notif-{{ n.channel }}">
+              {% if n.channel == 'sms' %}📱 SMS{% else %}✉️ Email{% endif %}
+            </span>
+          </td>
+          <td class="med-name">{{ n.medicine_name }}</td>
+          <td class="notif-message">{{ n.message }}</td>
+          <td class="muted-cell">{{ n.sent_at }}</td>
+          <td>
+            {% if not n.is_read %}
+              <span class="notif-status-badge notif-new">● New</span>
+            {% else %}
+              <span class="muted-cell">Read</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state" style="padding:2rem;">
+    <p>No notifications yet. Visit your home page to generate alerts for urgent medicines.</p>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Register Facility — MedRescue AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Register Facility</h1>
+    <p class="page-subtitle">Add your pharmacy or hospital to the MedRescue network, then log in.</p>
+  </div>
+</div>
+
+<div class="form-card">
+  <form method="POST" action="{{ url_for('add_facility') }}" class="med-form">
+
+    <div class="form-group">
+      <label for="name">Facility Name</label>
+      <input type="text" id="name" name="name"
+             placeholder="e.g. Riverside Pharmacy" required />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="type">Facility Type</label>
+        <select id="type" name="type" required>
+          <option value="pharmacy">Pharmacy</option>
+          <option value="hospital">Hospital</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="location_area">Location / Area</label>
+        <input type="text" id="location_area" name="location_area"
+               placeholder="e.g. Downtown" required />
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">Register Facility</button>
+      <a href="{{ url_for('home') }}" class="btn btn-ghost">Cancel</a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

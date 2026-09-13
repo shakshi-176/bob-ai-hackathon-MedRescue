@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}{% if logged_in %}Home — MedRescue AI{% else %}Login — MedRescue AI{% endif %}{% endblock %}
+
+{% block content %}
+
+{# ══════════════════════════════════════════════
+   NOT LOGGED IN → Login Card
+   ══════════════════════════════════════════════ #}
+{% if not logged_in %}
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-logo">⚕</div>
+    <h1 class="login-title">MedRescue <span class="brand-ai">AI</span></h1>
+    <p class="login-tagline">Medicine redistribution, intelligently matched.</p>
+
+    <form method="POST" action="{{ url_for('home') }}" class="login-form">
+      <div class="form-group">
+        <label for="role">Role</label>
+        <select id="role" name="role" required>
+          <option value="" disabled selected>Select role…</option>
+          <option value="hospital">Hospital</option>
+          <option value="pharmacy">Pharmacy</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username"
+               placeholder="e.g. citygeneral" required autocomplete="username" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password"
+               placeholder="••••••••" required autocomplete="current-password" />
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Log In</button>
+    </form>
+
+    <p class="login-register">
+      New facility?
+      <a href="{{ url_for('add_facility') }}">Register here</a>
+    </p>
+  </div>
+</div>
+
+{# ══════════════════════════════════════════════
+   LOGGED IN → Dashboard
+   ══════════════════════════════════════════════ #}
+{% else %}
+
+<div class="page-header">
+  <div>
+    <h1>Welcome, {{ facility_name }}</h1>
+    <p class="page-subtitle">Here's your medicine inventory at a glance.</p>
+  </div>
+  <a href="{{ url_for('matches', tab='mine') }}" class="btn btn-primary">View My Matches</a>
+</div>
+
+<!-- Stat Cards -->
+<p class="section-intro">A quick overview of your facility's activity on MedRescue AI.</p>
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-icon">💊</div>
+    <div class="stat-number">{{ total_meds }}</div>
+    <div class="stat-label">Medicines Registered</div>
+  </div>
+  <div class="stat-card stat-warn">
+    <div class="stat-icon">⏳</div>
+    <div class="stat-number">{{ expiring_count }}</div>
+    <div class="stat-label">Expiring Within 30 Days</div>
+  </div>
+  <div class="stat-card stat-info">
+    <div class="stat-icon">🔗</div>
+    <div class="stat-number">{{ pending_matches }}</div>
+    <div class="stat-label">Pending Matches</div>
+  </div>
+  <div class="stat-card stat-success">
+    <div class="stat-icon">✅</div>
+    <div class="stat-number">{{ completed_transfers }}</div>
+    <div class="stat-label">Completed Transfers</div>
+  </div>
+</div>
+
+<!-- Medicine Stock Table -->
+<div class="section-header" style="margin-top:2rem;">
+  <div>
+    <h2>Your Medicine Stock</h2>
+    <p class="section-intro" style="margin:0;">Your registered medicine inventory, sorted by urgency. Color indicates days until expiry.</p>
+  </div>
+</div>
+
+{% if own_meds %}
+<div class="table-wrap">
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Medicine Name</th>
+        <th class="num">Qty in Stock</th>
+        <th>Expiry Date</th>
+        <th class="num">Days Left</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in own_meds %}
+      <tr class="{{ m.expiry_class }}">
+        <td class="med-name">{{ m.medicine_name }}</td>
+        <td class="num">{{ m.quantity }}</td>
+        <td>{{ m.expiry_date }}</td>
+        <td class="num">
+          {% if m.days_left <= 0 %}—
+          {% else %}{{ m.days_left }}
+          {% endif %}
+        </td>
+        <td>
+          {% if m.days_left <= 0 %}
+            <span class="pill pill-expired">Expired</span>
+          {% elif m.days_left <= 7 %}
+            <span class="pill pill-red">Critical</span>
+          {% elif m.days_left <= 15 %}
+            <span class="pill pill-orange">Urgent</span>
+          {% elif m.days_left <= 30 %}
+            <span class="pill pill-yellow">Watch</span>
+          {% else %}
+            <span class="pill pill-green">Safe</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">💊</div>
+  <h2>No medicines registered yet</h2>
+  <p>Use <strong>Add Medicine</strong> in the navbar to register your first stock entry.</p>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

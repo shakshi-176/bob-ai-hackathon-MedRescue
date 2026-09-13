@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Matches — MedRescue AI{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Redistribution Matches</h1>
+    <p class="page-subtitle">AI-ranked suggestions for medicines expiring within 30 days.</p>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <a href="{{ url_for('matches', tab='mine') }}"
+     class="tab-link {{ 'tab-active' if tab == 'mine' }}">
+    My Matches
+    <span class="tab-count">{{ my_matches|length }}</span>
+  </a>
+  <a href="{{ url_for('matches', tab='all') }}"
+     class="tab-link {{ 'tab-active' if tab == 'all' }}">
+    All Matches
+    <span class="tab-count">{{ all_matches|length }}</span>
+  </a>
+</div>
+
+{% set display = my_matches if tab == 'mine' else all_matches %}
+
+{% if display %}
+<div class="matches-grid">
+  {% for m in display %}
+  <div class="match-card urgency-{{ m.urgency_label }}">
+
+    <div class="match-header">
+      <div>
+        <span class="match-med-name">{{ m.medicine_name }}</span>
+        {% if m.medicine_type %}<span class="medtype-badge medtype-{{ m.medicine_type }}">{{ m.medicine_type }}</span>{% endif %}
+      </div>
+      <div class="match-header-badges">
+        <span class="urgency-pill urgency-{{ m.urgency_label }}">
+          {% if m.urgency_label == 'critical' %}🔴 Critical
+          {% elif m.urgency_label == 'high' %}🟠 High
+          {% elif m.urgency_label == 'medium' %}🟡 Medium
+          {% else %}🟢 Low{% endif %}
+        </span>
+        <span class="expiry-range-badge expiry-range-{{ m.urgency_label }}">
+          {% if m.days_left <= 0 %}Expired
+          {% elif m.days_left <= 7 %}Expiring in 0–7 days
+          {% elif m.days_left <= 15 %}Expiring in 8–15 days
+          {% elif m.days_left <= 25 %}Expiring in 16–25 days
+          {% elif m.days_left <= 35 %}Expiring in 26–35 days
+          {% else %}35+ days remaining{% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="match-route">
+      <div class="route-node">
+        <span class="route-tag">FROM</span>
+        <span class="route-name">{{ m.from_facility_name }}</span>
+        <span class="route-area">{{ m.from_location }}</span>
+        {% if m.from_contact %}<span class="route-contact">📞 {{ m.from_contact }}</span>{% endif %}
+        {% if m.from_date_added %}<span class="route-date">Added: {{ m.from_date_added }}</span>{% endif %}
+      </div>
+      <div class="route-arrow">→</div>
+      <div class="route-node">
+        <span class="route-tag">TO</span>
+        <span class="route-name">{{ m.to_facility_name }}</span>
+        <span class="route-area">{{ m.to_location }}</span>
+        {% if m.to_contact %}<span class="route-contact">📞 {{ m.to_contact }}</span>{% endif %}
+        {% if m.to_date_added %}<span class="route-date">Added: {{ m.to_date_added }}</span>{% endif %}
+      </div>
+    </div>
+
+    {% if m.same_area %}
+    <div class="same-area-badge">📍 Same area — reduced logistics</div>
+    {% endif %}
+
+    <div class="match-reason">{{ m.reason|safe }}</div>
+
+    <div class="match-meta">
+      <span>Donor stock: <strong>{{ m.donor_qty }}</strong> units</span>
+      <span>Expiry: <strong>{{ m.expiry_date }}</strong></span>
+      <span>Score: <strong>{{ m.score }}</strong></span>
+    </div>
+
+    {% if m.pricing %}
+    <div class="price-breakdown">
+      <div class="price-breakdown-title">💰 Price Breakdown ({{ m.transfer_qty }} units)</div>
+      <div class="price-row">
+        <span>Base price per unit</span>
+        <span>₹{{ "%.2f"|format(m.pricing.base_price) }}</span>
+      </div>
+      <div class="price-row">
+        <span>+5% markup</span>
+        <span>+₹{{ "%.2f"|format(m.pricing.markup) }}</span>
+      </div>
+      <div class="price-row">
+        <span>Price per unit (with markup)</span>
+        <span>₹{{ "%.2f"|format(m.pricing.markup_price) }}</span>
+      </div>
+      <div class="price-row">
+        <span>Transportation charge</span>
+        <span>+₹{{ "%.2f"|format(m.pricing.transportation_charge) }}</span>
+      </div>
+      <div class="price-row price-total">
+        <span>Total amount</span>
+        <span>₹{{ "%.2f"|format(m.pricing.total_amount) }}</span>
+      </div>
+    </div>
+    {% endif %}
+
+    {% if m.from_facility_id == facility_id %}
+    <form method="POST" action="{{ url_for('approve_transfer') }}">
+      <input type="hidden" name="medicine_id"      value="{{ m.medicine_id }}" />
+      <input type="hidden" name="from_facility_id" value="{{ m.from_facility_id }}" />
+      <input type="hidden" name="to_facility_id"   value="{{ m.to_facility_id }}" />
+      <input type="hidden" name="transfer_qty"     value="{{ m.transfer_qty }}" />
+      <button type="submit" class="btn btn-approve">
+        ✓ Approve — transfer {{ m.transfer_qty }} units
+      </button>
+    </form>
+    {% else %}
+    <form method="POST" action="{{ url_for('place_order') }}">
+      <input type="hidden" name="medicine_id"        value="{{ m.medicine_id }}" />
+      <input type="hidden" name="source_facility_id" value="{{ m.from_facility_id }}" />
+      <input type="hidden" name="quantity"           value="{{ m.transfer_qty }}" />
+      <button type="submit" class="btn btn-request">
+        🛒 Request {{ m.transfer_qty }} units — ₹{{ "%.2f"|format(m.pricing.total_amount) if m.pricing else '—' }}
+      </button>
+    </form>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+  <div class="empty-icon">✅</div>
+  <h2>No matches found</h2>
+  {% if tab == 'mine' %}
+    <p>No pending redistribution matches involve your facility right now.</p>
+    <a href="{{ url_for('matches', tab='all') }}" class="btn btn-outline">View All Matches</a>
+  {% else %}
+    <p>All medicines are well within their expiry window or no needy facilities were found.</p>
+  {% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
