@@ -28,20 +28,20 @@
     <div class="table-wrap">
       <table class="data-table">
         <thead>
-              <tr>
-                    <th>Medicine Name</th>
-                    <th>Med Type</th>
-                    <th>Facility</th>
-                    <th>Type</th>
-                    <th>Area</th>
-                    <th>Contact Number</th>
-                    <th class="num">Qty</th>
-                    <th>Expiry</th>
-                    <th>Urgency</th>
-                    <th>Price Breakdown</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
+          <tr>
+                      <th>Medicine Name</th>
+                      <th>Med Type</th>
+                      <th>Facility</th>
+                      <th>Type</th>
+                      <th>Area</th>
+                      <th>Contact Number</th>
+                      <th class="num">Qty</th>
+                      <th class="col-c">Expiry</th>
+                      <th class="col-c">Urgency</th>
+                      <th>Price Breakdown</th>
+                      <th class="col-c">Action</th>
+          </tr>
+        </thead>
                 <tbody>
                   {% for r in results %}
                   <tr class="{{ r.expiry_class }}">
@@ -58,8 +58,8 @@
                       {% endif %}
                     </td>
                     <td class="num">{{ r.quantity }}</td>
-                    <td>{{ r.expiry_date }}</td>
-                    <td>
+                    <td class="col-c">{{ r.expiry_date }}</td>
+                    <td class="col-c">
                       {% if r.expiry_class == 'expiry-red' %}
                         <span class="pill pill-red">{{ r.days_left }}d</span>
                       {% elif r.expiry_class == 'expiry-orange' %}

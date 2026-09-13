@@ -443,7 +443,8 @@ a:hover { text-decoration: underline; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  overflow-x: auto;
+  overflow-x: auto;          /* horizontal scroll on small screens */
+  -webkit-overflow-scrolling: touch;
   box-shadow: var(--shadow);
 }
 
@@ -451,12 +452,14 @@ a:hover { text-decoration: underline; }
   width: 100%;
   border-collapse: collapse;
   font-size: .9rem;
+  /* prevent table from shrinking below its content */
+  min-width: 520px;
 }
 
 .data-table thead tr { background: var(--navy); }
 .data-table th {
-  padding: .7rem 1.1rem;
-  text-align: left;
+  padding: .75rem 1rem;       /* 12px top/bottom, 16px left/right */
+  text-align: left;           /* default: text columns left-aligned */
   color: #fff;
   font-weight: 600;
   font-size: .83rem;
@@ -474,10 +477,30 @@ a:hover { text-decoration: underline; }
 .data-table tbody tr.expiry-orange { background: #fff9f5 !important; }
 .data-table tbody tr.expiry-yellow { background: #fffdf5 !important; }
 
-.data-table td { padding: .65rem 1.1rem; vertical-align: middle; }
+/* Cell padding — consistent 12px top/bottom, 16px left/right */
+.data-table td {
+  padding: .75rem 1rem;
+  vertical-align: middle;
+}
 
+/* ── Column alignment helpers ──────────────────────────────
+   .num   → right-aligned  (quantities, prices, IDs — tabular numerals)
+   .col-c → centre-aligned (dates, badges, short status values)
+   Header <th> that carries either class will match its data cells.
+   ─────────────────────────────────────────────────────────── */
+.data-table th.num,
+.data-table td.num {
+  text-align: center;             /* numbers centred so header matches data */
+  font-variant-numeric: tabular-nums;
+}
+
+.data-table th.col-c,
+.data-table td.col-c {
+  text-align: center;
+}
+
+/* Keep the medicine-name cell left + bold */
 .med-name { font-weight: 600; color: var(--navy); }
-.num      { text-align: right; font-variant-numeric: tabular-nums; }
 
 
 /* ── Urgency Pills ──────────────────────────────────────── */

@@ -96,9 +96,9 @@
       <tr>
         <th>Medicine Name</th>
         <th class="num">Qty in Stock</th>
-        <th>Expiry Date</th>
+        <th class="col-c">Expiry Date</th>
         <th class="num">Days Left</th>
-        <th>Status</th>
+        <th class="col-c">Status</th>
       </tr>
     </thead>
     <tbody>
@@ -106,13 +106,13 @@
       <tr class="{{ m.expiry_class }}">
         <td class="med-name">{{ m.medicine_name }}</td>
         <td class="num">{{ m.quantity }}</td>
-        <td>{{ m.expiry_date }}</td>
+        <td class="col-c">{{ m.expiry_date }}</td>
         <td class="num">
           {% if m.days_left <= 0 %}—
           {% else %}{{ m.days_left }}
           {% endif %}
         </td>
-        <td>
+        <td class="col-c">
           {% if m.days_left <= 0 %}
             <span class="pill pill-expired">Expired</span>
           {% elif m.days_left <= 7 %}

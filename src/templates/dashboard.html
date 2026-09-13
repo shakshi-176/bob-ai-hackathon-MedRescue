@@ -20,31 +20,31 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>#</th>
+        <th class="col-c">#</th>
         <th>Medicine</th>
         <th>Facility</th>
-        <th>Type</th>
+        <th class="col-c">Type</th>
         <th>Area</th>
-        <th>Qty</th>
-        <th>Needed</th>
-        <th>Manufacture Date</th>
-        <th>Expiry Date</th>
-        <th>Days Left</th>
+        <th class="num">Qty</th>
+        <th class="num">Needed</th>
+        <th class="col-c">Manufacture Date</th>
+        <th class="col-c">Expiry Date</th>
+        <th class="col-c">Days Left</th>
       </tr>
     </thead>
     <tbody>
       {% for m in medicines %}
       <tr class="{{ m.expiry_class }}">
-        <td class="muted">{{ loop.index }}</td>
+        <td class="col-c muted">{{ loop.index }}</td>
         <td class="medicine-name">{{ m.medicine_name }}</td>
         <td>{{ m.facility_name }}</td>
-        <td><span class="badge badge-{{ m.facility_type }}">{{ m.facility_type }}</span></td>
+        <td class="col-c"><span class="badge badge-{{ m.facility_type }}">{{ m.facility_type }}</span></td>
         <td class="muted">{{ m.location_area }}</td>
         <td class="num">{{ m.quantity }}</td>
         <td class="num">{{ m.needed_quantity if m.needed_quantity > 0 else '—' }}</td>
-        <td class="muted">{{ m.manufacture_date }}</td>
-        <td>{{ m.expiry_date }}</td>
-        <td class="days-left">
+        <td class="col-c muted">{{ m.manufacture_date }}</td>
+        <td class="col-c">{{ m.expiry_date }}</td>
+        <td class="col-c days-left">
           {% if m.days_left <= 0 %}
             <span class="tag tag-expired">Expired</span>
           {% elif m.days_left <= 7 %}
