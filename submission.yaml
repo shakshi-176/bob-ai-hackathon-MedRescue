@@ -2,61 +2,60 @@
 # HACKATHON SUBMISSION METADATA
 # =============================================================================
 # Instructions:
-#   - Fill in ALL required fields (marked with # REQUIRED)
-#   - Optional fields can be left as empty strings ""
-#   - Do NOT rename this file — the evaluation pipeline reads it by name
-#   - Use double quotes around all string values
+# - Fill in ALL required fields (marked with # REQUIRED)
+# - Optional fields can be left as empty strings ""
+# - Do NOT rename this file — the evaluation pipeline reads it by name
+# - Use double quotes around all string values
 # =============================================================================
 
 team:
-  name: "MedRescue"                             
-  track: "AI"                            
+  name: "MedRescue"
+  track: "AI"
   lead:
-    name: "Sakshi Parmar"                           
-    email: "24bca104@edu.charusat.in"                          
+    name: "Sakshi Parmar"
+    email: "24bca104@edu.charusat.in"
   members:
-    - name: "Rajvi Khunt"                         
+    - name: "Rajvi Khunt"
       email: "24bca066@edu.charusat.in"
-    - name: "Ayushi Raval"                               	
+    - name: "Ayushi Raval"
       email: "24bca211@edu.charusat.in"
     - name: "Hir Ramani"
       email: "24bca202@edu.charusat.in"
 
 submission:
-  title: "MedRescue AI"                            
-  problem_statement: >                 
-		Pharmacies and hospitals discard large quantities of unexpired medicine
-   		because there is no system to identify who needs it before it expires,
-   		while nearby locations simultaneously face shortages of that exact
-    		medicine — a visibility and coordination gap, not a supply problem.	
-
-  solution_summary: >                  
-		MedRescue AI lets pharmacies and hospitals register medicine stock with
-    		expiry dates. AI monitors this data, flags medicines nearing expiry,
-   	 	automatically matches them to nearby locations with real need using
-   	 	AI-ranked matching, and sends AI-generated notifications recommending
-		the transfer.
-  key_features:                      
-    - "AI-powered expiry risk prediction with tiered alerts (30/15/7 days)"
-    - "AI-driven matching engine ranking recipients by need, quantity, and proximity"
-    - "Auto-generated, reasoned notifications explaining each match"
-    - "Outcome tracking to improve future predictions"    
-                              
+  title: "MedRescue AI"
+  problem_statement: >
+    Pharmacies and hospitals discard large quantities of unexpired medicine
+    because there is no system to identify who needs it before it expires,
+    while nearby locations simultaneously face shortages of that exact
+    medicine - a visibility and coordination gap, not a supply problem.
+  solution_summary: >
+    MedRescue AI lets pharmacies and hospitals register medicine stock with
+    expiry dates. The system flags medicines nearing expiry, matches them to
+    nearby locations with real need using rule-based ranking logic, and
+    generates a recommended transfer with a clear explanation for human
+    approval.
+  key_features:
+    - "Tiered expiry risk alerts (30/15/7 days) so users can act before stock is wasted"
+    - "Rule-based matching engine ranking recipients by need, quantity fit, and proximity"
+    - "Auto-generated, reasoned notifications explaining each recommended match"
+    - "Outcome tracking to inform future matching decisions"
   tech_stack:
-    languages: ["Python", "JavaScript", "HTML", "CSS"]                      
-    frameworks: ["Flask"]                     
-    ibm_technologies: ["IBM Bob"]               
-    databases: ["SQLite"]                      
-    other: []                         
-  what_we_are_most_proud_of: >         
-	The AI-driven matching engine, which reasons across expiry urgency,
-        quantity, and proximity to recommend the best redistribution match —
-        not just a simple lookup or alert system.
-
-  known_limitations: >                 
-     	Uses simulated inventory data rather than live pharmacy/hospital data.
-    	Transfers require human approval before execution. Cold-chain and
-    	controlled substances are excluded from this version.
+    languages: ["Python", "JavaScript", "HTML", "CSS"]
+    frameworks: ["Flask"]
+    ibm_technologies: ["IBM Bob"]
+    databases: ["SQLite"]
+    other: []
+  what_we_are_most_proud_of: >
+    The matching engine, which ranks across expiry urgency, quantity, and
+    proximity to recommend the best redistribution match - not just a simple
+    lookup or alert system.
+  known_limitations: >
+    Uses simulated inventory data rather than live pharmacy/hospital data.
+    Transfers require human approval before execution. Cold-chain and
+    controlled substances are excluded from this version. Matching logic is
+    rule-based rather than a trained AI model; IBM Bob was used as the
+    development-time coding agent rather than a runtime component.
 
 # =============================================================================
 # ARTIFACT LOCATIONS
@@ -66,7 +65,7 @@ artifacts:
   source_code: "src/"
   setup_guide: "docs/setup-guide.md"
   architecture_doc: "docs/architecture.md"
-  demo_video: "demo/demo-video-link.txt"   # URL to hosted video (YouTube, Loom, Box)
-  live_demo: "demo/live-demo-url.txt"      # URL to deployed demo (optional)
+  demo_video: "demo/demo-video-link.txt"
+  live_demo: "demo/live-demo-url.txt"
   screenshots: "demo/screenshots/"
   presentation: "presentation/"
