@@ -2,40 +2,51 @@
 
 ## System Diagram
 
-```mermaid
+​```mermaid
 graph TD
-    A[User - Pharmacy or Hospital Staff] -->|Enters stock data| B[Frontend - HTML CSS JS]
-    B -->|API request| C[Backend - Flask]
-    C -->|Store or Retrieve| D[(SQLite Database)]
-    C -->|Run prediction| E[Expiry Risk Engine]
-    E -->|Flagged medicines| F[AI Matching Engine]
-    F -->|Best match ranked| G[Notification Generator]
-    G -->|Recommendation| B
-```
+    A[User - Hospital or Pharmacy Staff] -->|Login / Sign Up| B[Auth System - Flask-Login]
+    B -->|Role-based redirect| C[Hospital or Pharmacy Dashboard]
+    C -->|Add medicine + price| D[Frontend - HTML CSS JS]
+    D -->|API request| E[Backend - Flask]
+    E -->|Store or Retrieve| F[(SQLite Database)]
+    E -->|Run check| G[Expiry Risk Engine]
+    G -->|Flagged medicines by type/urgency| H[Rule-Based Matching Engine]
+    H -->|Ranked match + price breakdown| I[Pricing Calculator]
+    I -->|Request this medicine| J[Orders + Payment Simulation]
+    J -->|Payment confirmed| K[Notification System]
+    K -->|SMS/Email simulated + navbar bell| D
+​```
 
 ## Component Table
 
 | Component | Technology | Responsibility |
 |---|---|---|
-| Frontend | HTML, CSS, JavaScript | Displays stock dashboard, expiry alerts, and match recommendations to users |
-| Backend / API | Python (Flask) | Handles requests between frontend and database; runs core logic |
-| Database | SQLite | Stores registered medicine stock, facility info, and transfer history |
-| Expiry Risk Engine | Python | Scans stock data and flags medicines nearing expiry (30/15/7-day thresholds) |
-| AI Matching Engine | Python | Ranks other facilities by need, quantity fit, and proximity for each flagged medicine |
-| Notification Generator | Python | Drafts a reasoned explanation and recommendation message for each match |
-| Development Tool | IBM Bob | Used to scaffold, build, and debug the backend and matching logic |
+| Frontend | HTML, CSS, JavaScript | Displays dashboards, expiry alerts, match results, price breakdowns, orders, and the notification bell |
+| Auth System | Flask-Login | Handles sign-up/login, hashes passwords, and enforces role-based access (Hospital vs Pharmacy) |
+| Backend / API | Python (Flask) | Routes requests between frontend and database; runs all core logic |
+| Database | SQLite | Stores users, facility info, medicine stock (with type and price), orders, and notifications |
+| Expiry Risk Engine | Python | Flags medicines nearing expiry using type-specific thresholds (tighter for injectables, looser for tablets/capsules) |
+| Matching Engine | Python (rule-based) | Ranks candidate facilities by need, quantity fit, and urgency using fixed deterministic rules — not a trained ML/AI model |
+| Pricing Calculator | Python | Computes a 5% markup on base price plus a tiered flat transportation charge to produce the total order amount |
+| Orders & Payment | Python + SQLite | Creates order records on request, simulates payment confirmation (no real payment gateway integrated) |
+| Notification System | Python + SQLite | Logs simulated SMS/email notifications on urgency and payment events; surfaces unread count via a navbar bell |
+| Development Tool | IBM Bob | Used throughout to scaffold, extend, and debug the Flask backend, database schema, and matching/pricing logic |
 
 ## Data Flow (End-to-End)
 
-1. Staff registers medicine stock (name, quantity, manufacture date, expiry date) via the frontend.
-2. Data is sent to the Flask backend and stored in the SQLite database.
-3. The Expiry Risk Engine scans stock and flags items nearing expiry.
-4. For each flagged item, the AI Matching Engine queries the database for other facilities with matching need.
-5. The best-ranked match is passed to the Notification Generator, which creates a human-readable recommendation.
-6. The recommendation is displayed on the dashboard for both facilities to review and approve.
+1. A facility signs up as either a Hospital or Pharmacy and logs in; the auth system routes them to the correct dashboard.
+2. Staff register medicine stock (name, type, quantity, expiry date, price per unit) via the frontend.
+3. The Expiry Risk Engine scans stock and flags items using type-specific urgency thresholds (e.g. injectables flagged sooner than tablets).
+4. For each flagged item, the rule-based Matching Engine ranks other facilities by need, quantity fit, and urgency.
+5. The Pricing Calculator computes the price breakdown (base price, +5% markup, + transportation charge) for the top match.
+6. The requesting facility clicks "Request this medicine," creating a pending order with the full breakdown.
+7. Clicking "Pay Now" simulates payment, updating the order to "paid."
+8. On payment confirmation, a simulated SMS/email notification is logged and an unread badge appears on the navbar bell, visible only to the relevant facility.
 
 ## Security and Scalability Notes
 
-- Current scope (hackathon version) uses simulated data and does not implement production-grade authentication or encryption; it is intended to demonstrate the core prediction-and-matching logic.
-- For production use, facility-level authentication, encrypted storage of stock data, and role-based access would be required so only authorized staff can approve transfers.
-- Matching logic currently runs against a small simulated dataset; a production version would need database indexing and optimization to handle matching across hundreds of facilities in real time.
+- Authentication uses hashed passwords via Flask-Login; sessions are used for role-based access control between Hospital and Pharmacy views.
+- Payment is fully simulated for this hackathon prototype — no real payment gateway (e.g. Razorpay/Stripe) is integrated, since that requires merchant setup and API keys outside the scope of a demo.
+- SMS/email notifications are simulated and logged to the database rather than sent through a real messaging API.
+- For production use, this would additionally need encrypted storage of stock/pricing data, stricter facility-level authorization checks on orders, and a real payment gateway with webhook-based confirmation.
+- The matching and pricing logic currently runs against a small demo dataset; a production version would need database indexing to scale matching across hundreds of facilities in real time.
