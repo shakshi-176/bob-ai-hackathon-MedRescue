@@ -9,51 +9,54 @@
 # =============================================================================
 
 team:
-  name: ""                             # REQUIRED — e.g., "Orion Squad"
-  track: ""                            # REQUIRED — one of: AI | DevOps | Sustainability | Open
+  name: "MedRescue"                             
+  track: "AI"                            
   lead:
-    name: ""                           # REQUIRED — e.g., "Alice Chen"
-    email: ""                          # REQUIRED — e.g., "alice.chen@ibm.com"
+    name: "Sakshi Parmar"                           
+    email: "24bca104@edu.charusat.in"                          
   members:
-    - name: ""                         # REQUIRED — Team member 1
-      email: ""
-    - name: ""                         # Add more members by copying the two lines above
-      email: ""
-    - name: ""
-      email: ""
+    - name: "Rajvi Khunt"                         
+      email: "24bca066@edu.charusat.in"
+    - name: "Ayushi Raval"                               	
+      email: "24bca211@edu.charusat.in"
+    - name: "Hir Ramani"
+      email: "24bca202@edu.charusat.in"
 
 submission:
-  title: ""                            # REQUIRED — Project display name, e.g., "SmartOps Dashboard"
+  title: "MedRescue AI"                            
+  problem_statement: >                 
+		Pharmacies and hospitals discard large quantities of unexpired medicine
+   		because there is no system to identify who needs it before it expires,
+   		while nearby locations simultaneously face shortages of that exact
+    		medicine — a visibility and coordination gap, not a supply problem.	
 
-  problem_statement: >                 # REQUIRED — 1-3 sentences. What problem? Who has it?
-    Replace this text with a concise description of the real-world problem
-    your project addresses and who experiences it.
-
-  solution_summary: >                  # REQUIRED — 1-3 sentences. What did you build?
-    Replace this text with a clear description of your solution
-    and how it addresses the problem above.
-
-  key_features:                        # REQUIRED — List 3 to 5 specific features you implemented
-    - ""                               # e.g., "Real-time pipeline anomaly detection using watsonx.ai"
-    - ""
-    - ""
-    - ""                               # optional 4th
-    - ""                               # optional 5th
-
+  solution_summary: >                  
+		MedRescue AI lets pharmacies and hospitals register medicine stock with
+    		expiry dates. AI monitors this data, flags medicines nearing expiry,
+   	 	automatically matches them to nearby locations with real need using
+   	 	AI-ranked matching, and sends AI-generated notifications recommending
+		the transfer.
+  key_features:                      
+    - "AI-powered expiry risk prediction with tiered alerts (30/15/7 days)"
+    - "AI-driven matching engine ranking recipients by need, quantity, and proximity"
+    - "Auto-generated, reasoned notifications explaining each match"
+    - "Outcome tracking to improve future predictions"    
+                              
   tech_stack:
-    languages: []                      # REQUIRED — e.g., ["Python", "TypeScript"]
-    frameworks: []                     # e.g., ["FastAPI", "React"]
-    ibm_technologies: []               # e.g., ["watsonx.ai", "IBM Bob", "IBM Cloud Functions"]
-    databases: []                      # e.g., ["PostgreSQL", "Redis"]
-    other: []                          # e.g., ["Docker", "GitHub Actions", "Slack API"]
+    languages: ["Python", "JavaScript", "HTML", "CSS"]                      
+    frameworks: ["Flask"]                     
+    ibm_technologies: ["IBM Bob"]               
+    databases: ["SQLite"]                      
+    other: []                         
+  what_we_are_most_proud_of: >         
+	The AI-driven matching engine, which reasons across expiry urgency,
+        quantity, and proximity to recommend the best redistribution match —
+        not just a simple lookup or alert system.
 
-  what_we_are_most_proud_of: >         # Optional but recommended — guides judges to your best work
-    Replace with what aspect of the submission you consider strongest
-    and want judges to pay special attention to.
-
-  known_limitations: >                 # Optional but recommended — be honest about gaps
-    Replace with any known limitations, incomplete features,
-    or shortcuts taken due to time constraints.
+  known_limitations: >                 
+     	Uses simulated inventory data rather than live pharmacy/hospital data.
+    	Transfers require human approval before execution. Cold-chain and
+    	controlled substances are excluded from this version.
 
 # =============================================================================
 # ARTIFACT LOCATIONS
