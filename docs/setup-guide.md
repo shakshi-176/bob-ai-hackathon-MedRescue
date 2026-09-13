@@ -6,74 +6,54 @@
 
 Before you begin, ensure you have the following installed:
 
-- [ ] [e.g., Python 3.11+]
-- [ ] [e.g., Node.js 18+]
-- [ ] [e.g., Docker Desktop]
-- [ ] [e.g., An IBM Cloud account with watsonx.ai access]
+- [ ] Python 3.9+
+- [ ] pip (comes with Python)
+- [ ] No external accounts, API keys, or database server required — this project uses SQLite, which is created automatically on first run.
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and fill in the values:
-
-```bash
-cp .env.example .env
-```
-
-| Variable | Description | Required |
-|---|---|---|
-| `WATSONX_API_KEY` | Your IBM watsonx.ai API key | Yes |
-| `WATSONX_PROJECT_ID` | Your watsonx.ai project ID | Yes |
-| `DATABASE_URL` | PostgreSQL connection string | Yes |
-| `SLACK_WEBHOOK_URL` | Slack webhook for alerts | No |
+No `.env` file is required for this project. The Flask secret key is set directly in `app.py` for the purposes of this hackathon demo (not suitable for production use — see Known Limitations in the README).
 
 ## Installation
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/[your-org]/[your-repo].git
-cd [your-repo]
+git clone https://github.com/shakshi-176/bob-ai-hackathon-MedRescue.git
+cd bob-ai-hackathon-MedRescue/src
 
-# 2. Install backend dependencies
-[your command — e.g.: pip install -r requirements.txt]
+# 2. (Recommended) Create and activate a virtual environment
+python -m venv venv
+venv\Scripts\activate        # Windows
+# source venv/bin/activate   # macOS/Linux
 
-# 3. Install frontend dependencies (if applicable)
-[your command — e.g.: cd frontend && npm install]
-
-# 4. Set up the database (if applicable)
-[your command — e.g.: python manage.py migrate]
+# 3. Install dependencies
+pip install -r requirements.txt
 ```
 
 ## Running the Application
 
 ```bash
-# Start the backend
-[your command — e.g.: uvicorn app.main:app --reload]
-
-# Start the frontend (in a separate terminal, if applicable)
-[your command — e.g.: cd frontend && npm run dev]
+python app.py
 ```
 
-The application will be available at: `http://localhost:[PORT]`
+The application will be available at: `http://localhost:5000`
 
-## Running Tests
+The SQLite database (`medrescue.db`) is created and seeded with sample data automatically on first run — no manual setup step is needed.
 
-```bash
-[your test command — e.g.: pytest tests/ -v]
-```
+## Quick Demo
 
-## Quick Demo (Optional)
-
-If you have a demo script or sample data to showcase the project quickly:
-
-```bash
-[e.g.: python demo/seed_demo_data.py]
-[e.g.: open http://localhost:8000/demo]
-```
+1. Open `http://localhost:5000` in your browser.
+2. Click **Sign Up** and create a Hospital account (or Pharmacy — try both to see each dashboard).
+3. Log in, then go to **Add Medicine** and add a medicine with a type, expiry date, and price per unit.
+4. Go to **Matches** to see ranked results with the price breakdown (base price + 5% markup + transportation charge).
+5. Click **Request this medicine**, then **Pay Now** to simulate a payment.
+6. Check the notification bell in the navbar — it should show a new unread notification confirming the simulated payment.
 
 ## Troubleshooting
 
 | Issue | Solution |
 |---|---|
-| [e.g., `ModuleNotFoundError`] | [e.g., Run `pip install -r requirements.txt` again] |
-| [e.g., Database connection refused] | [e.g., Ensure PostgreSQL is running: `docker compose up db`] |
-| [e.g., watsonx.ai 401 error] | [e.g., Check `WATSONX_API_KEY` in your `.env` file] |
+| `ModuleNotFoundError: No module named 'flask'` | Run `pip install -r requirements.txt` again, and make sure your virtual environment is activated |
+| `Address already in use` / port 5000 busy | Stop any other process using port 5000, or edit the port in `app.py` |
+| Changes not showing in browser | Restart the server (`Ctrl+C`, then `python app.py`) and hard-refresh the browser (`Ctrl+Shift+R`) |
+| `sqlite3.OperationalError: no such table` | Delete `medrescue.db` and restart the server so it can be recreated and reseeded |
