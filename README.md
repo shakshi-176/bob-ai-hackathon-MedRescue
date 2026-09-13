@@ -1,121 +1,53 @@
-# 🚀 [Your Project Title Here]
+# 🚀 MedRescue AI
 
-> ⚠️ **Replace everything in `[ ]` brackets with your actual content before submission.**
+> A hackathon prototype connecting hospitals and pharmacies to redistribute medicine stock before it expires.
 
 ---
 
 ## 👥 Team
 
-| Field | Value |
-|---|---|
-| **Team Name** | [Your Team Name] |
-| **Track** | [AI / DevOps / Sustainability / Open] |
-| **Team Lead** | [Name] — [email@ibm.com] |
-| **Members** | [Name 1], [Name 2], [Name 3] |
+| Field         | Value                                                          |
+| ------------- | --------------------------------------------------------------- |
+| **Team Name** | MedRescue                                                       |
+| **Track**     | AI                                                               |
+| **Team Lead** | Sakshi Parmar — [lead-shakshiparmar108@gmail.com]                            |
+| **Members**   | Rajvi Khunt, Ayushi Raval, Hir Ramani                            |
 
 ---
 
 ## 🎯 Problem Statement
 
-> In 2–3 sentences: What problem does your project solve? Who experiences this problem?
-
-[Describe the real-world problem your project addresses. Be specific about who the user is and what pain point they face.]
+Hospitals and pharmacies regularly stock medicines that go unused and expire, while nearby facilities may urgently need the same medicine and run short. There is currently no easy way for facilities to see each other's surplus or shortage in real time, leading to wasted stock on one side and unmet urgent need on the other — especially critical for time-sensitive medicines like injectables.
 
 ---
 
 ## 💡 Solution
 
-> In 2–3 sentences: What did you build? How does it solve the problem above?
-
-[Describe your solution clearly. Explain the core mechanism — what makes it work.]
+MedRescue AI lets hospitals and pharmacies list their medicine stock (with type, expiry date, and price) and automatically flags items nearing expiry using type-specific urgency thresholds. A rule-based matching engine then ranks other facilities that need that medicine, shows a transparent price breakdown (base price + markup + transportation), and lets facilities request and simulate payment for a transfer — with notifications keeping both sides updated throughout.
 
 ---
 
 ## ✨ Key Features
 
-- **Feature 1:** [Brief description — e.g., "Real-time anomaly detection using watsonx.ai"]
-- **Feature 2:** [Brief description]
-- **Feature 3:** [Brief description]
-- **Feature 4:** [Optional]
-- **Feature 5:** [Optional]
+- **Role-based login** — separate Hospital and Pharmacy accounts with dedicated dashboards
+- **Type-aware expiry urgency** — injectables are flagged sooner than tablets/capsules, using tiered red/orange/yellow/green thresholds
+- **Rule-based matching engine** — ranks candidate facilities by need, quantity fit, and urgency
+- **Transparent pricing** — automatic 5% markup and tiered transportation charge shown as a full price breakdown on every match
+- **Order & simulated payment flow** — request a medicine, see the total, and simulate payment confirmation
+- **Real-time notifications** — simulated SMS/email alerts on urgency and payment events, surfaced via a navbar notification bell with unread count
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Category | Technologies |
-|---|---|
-| **Languages** | [e.g., Python, TypeScript] |
-| **Frameworks** | [e.g., FastAPI, React] |
-| **IBM Technologies** | [e.g., watsonx.ai, IBM Bob, IBM Cloud] |
-| **Databases** | [e.g., PostgreSQL, Redis] |
-| **Other** | [e.g., Docker, GitHub Actions] |
+| Category             | Technologies                           |
+| --------------------- | --------------------------------------- |
+| **Languages**          | Python, HTML, CSS, JavaScript          |
+| **Frameworks**         | Flask                                    |
+| **IBM Technologies**   | IBM Bob (used to scaffold, extend, and debug the backend and matching logic) |
+| **Databases**          | SQLite                                   |
+| **Other**              | Flask sessions (auth), Git/GitHub        |
 
 ---
 
-## 📁 Repository Structure
-
-```
-├── src/                  # All source code
-├── docs/                 # Written documentation
-│   ├── problem-statement.md
-│   ├── solution-overview.md
-│   ├── architecture.md
-│   └── setup-guide.md
-├── demo/                 # Demo artifacts
-│   ├── screenshots/      # App screenshots
-│   └── demo-video-link.txt  # Link to demo video
-├── presentation/         # Slide deck
-└── submission.yaml       # Structured submission metadata
-```
-
----
-
-## ⚡ How to Run
-
-> **Copy these exact steps from your [`docs/setup-guide.md`](docs/setup-guide.md)**
-
-```bash
-# 1. Clone the repo
-git clone https://github.com/[your-repo].git
-cd [your-repo]
-
-# 2. Install dependencies
-[your install command here]
-
-# 3. Configure environment
-cp .env.example .env
-# Edit .env with your values
-
-# 4. Run the project
-[your run command here]
-```
-
----
-
-## 🖥️ Demo
-
-| Artifact | Link |
-|---|---|
-| 📹 Demo Video | [See demo/demo-video-link.txt](demo/demo-video-link.txt) |
-| 🌐 Live Demo | [See demo/live-demo-url.txt](demo/live-demo-url.txt) |
-| 🖼️ Screenshots | [See demo/screenshots/](demo/screenshots/) |
-| 📊 Presentation | [See presentation/slides.pdf](presentation/) |
-
----
-
-## ⚠️ Known Limitations
-
-> Be honest — judges appreciate transparency over overclaiming.
-
-- [Limitation 1: e.g., "Authentication is mocked — not production-ready"]
-- [Limitation 2: e.g., "Only tested on Chrome"]
-- [Limitation 3: e.g., "Feature X is scaffolded but not fully implemented"]
-
----
-
-## 🏅 What We're Most Proud Of
-
-[Tell the judges what part of your submission is strongest and worth paying close attention to.]
-
----
+## 📁 Repository Structure	
