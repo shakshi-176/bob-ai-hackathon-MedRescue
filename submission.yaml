@@ -31,14 +31,14 @@ submission:
     medicine - a visibility and coordination gap, not a supply problem.
   solution_summary: >
     MedRescue AI lets pharmacies and hospitals register medicine stock with
-    expiry dates. The system monitors this data, flags medicines nearing
-    expiry using tiered urgency rules, automatically matches them to nearby
-    locations with real need using a rule-based ranking engine, and sends
-    automated notifications recommending the transfer.
+    expiry dates. The system flags medicines nearing expiry, matches them to
+    nearby locations with real need using rule-based ranking logic, and
+    generates a recommended transfer with a clear price breakdown for human
+    approval.
   key_features:
-    - "Automated expiry risk detection with tiered alerts (30/15/7 days, adjusted by medicine type)"
-    - "Rule-based matching engine ranking recipients by need, quantity, and proximity"
-    - "Auto-generated notifications explaining each match's reasoning"
+    - "Tiered expiry risk alerts (30/15/7 days, adjusted by medicine type) so users can act before stock is wasted"
+    - "Rule-based matching engine ranking recipients by need, quantity fit, and proximity"
+    - "Auto-generated notifications explaining each recommended match"
     - "Transparent pricing breakdown with simulated order and payment flow"
   tech_stack:
     languages: ["Python", "JavaScript", "HTML", "CSS"]
@@ -47,15 +47,17 @@ submission:
     databases: ["SQLite"]
     other: []
   what_we_are_most_proud_of: >
-    The end-to-end matching engine, which reasons across expiry urgency,
-    quantity, and proximity to recommend the best redistribution match -
-    not just a simple lookup or alert system - combined with a full
-    request-to-payment flow that makes the recommendation actionable.
+    The matching engine, which reasons across expiry urgency, quantity, and
+    proximity to recommend the best redistribution match - not just a simple
+    lookup or alert system - combined with a full request-to-payment flow
+    that makes the recommendation actionable.
   known_limitations: >
     Uses simulated inventory data rather than live pharmacy/hospital data.
     Transfers require human approval before execution. Cold-chain and
-    controlled substances are excluded from this version. Passwords are
-    stored in plaintext for this prototype rather than hashed.
+    controlled substances are excluded from this version. Matching logic is
+    rule-based rather than a trained AI model; IBM Bob was used as the
+    development-time coding agent rather than a runtime component. Passwords
+    are stored in plaintext for this prototype rather than hashed.
 
 # =============================================================================
 # ARTIFACT LOCATIONS
